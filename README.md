@@ -1,6 +1,6 @@
 # Single Page Application
 
-https://registry.terraform.io/modules/Xerris-Terraform-Modules/event-lambda/aws/latest
+https://registry.terraform.io/modules/Xerris-Terraform-Modules/single-page-app/aws/latest
 
 This is a quick way to spin up the necesary S3 Buckets, Cloudfront distributions, Route 53 records and ACM Certificates for a typical React/Single Page Application
 
