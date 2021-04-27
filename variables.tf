@@ -28,3 +28,7 @@ variable "use_default_domain" {
   description = "Use CloudFront website address without Route53 and ACM certificate"
 }
 
+variable "cloudfront-aliases" {
+  default     = []
+  description = "Use CloudFront website address without Route53 and ACM certificate"
+}
