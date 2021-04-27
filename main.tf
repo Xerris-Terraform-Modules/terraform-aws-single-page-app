@@ -105,6 +105,8 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   default_root_object = "index.html"
 
   aliases = local.local_aliases
+
+  
   default_cache_behavior {
     allowed_methods = [
       "GET",
@@ -117,7 +119,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     ]
 
     target_origin_id = "s3-cloudfront"
-
+    
     forwarded_values {
       query_string = false
 
