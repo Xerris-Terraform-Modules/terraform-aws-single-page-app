@@ -6,12 +6,12 @@ provider "aws" {
 locals {
   default_certs = var.use_default_domain ? ["default"] : []
   acm_certs     = var.use_default_domain ? [] : ["acm"]
-  domain_name   = var.use_default_domain ? [] : [var.domain_name]
+  domain_name   = var.use_default_domain ? "" : var.domain_name
 }
 
 data "aws_acm_certificate" "acm_cert" {
   count    = var.use_default_domain ? 0 : 1
-  domain   = coalesce(var.acm_certificate_domain, "*.${var.hosted_zone}")
+  domain   = coalesce(var.acm_certificate_domain, var.hosted_zone)
   provider = aws.aws_cloudfront
   //CloudFront uses certificates from US-EAST-1 region only
   statuses = [
@@ -100,7 +100,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  aliases = local.domain_name
+  aliases = ["${local.domain_name}.${var.hosted_zone}"]
 
   default_cache_behavior {
     allowed_methods = [
