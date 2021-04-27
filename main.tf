@@ -7,6 +7,8 @@ locals {
   default_certs = var.use_default_domain ? ["default"] : []
   acm_certs     = var.use_default_domain ? [] : ["acm"]
   domain_name   = var.use_default_domain ? "" : var.domain_name
+  local_aliases = var.cloudfront-aliases == [] ? ["${local.domain_name}.${var.hosted_zone}"] : formatlist("%s.${var.hosted_zone}", var.cloudfront-aliases)
+ 
 }
 
 data "aws_acm_certificate" "acm_cert" {
@@ -64,13 +66,15 @@ data "aws_route53_zone" "domain_name" {
 }
 
 resource "aws_route53_record" "route53_record" {
-  count = var.use_default_domain ? 0 : 1
+  for_each = toset(local.local_aliases)
+  //count = var.use_default_domain ? 0 : 1
   depends_on = [
     aws_cloudfront_distribution.s3_distribution
   ]
 
   zone_id = data.aws_route53_zone.domain_name[0].zone_id
-  name    = var.domain_name
+  //name    = var.domain_name
+  name = each.value
   type    = "A"
 
   alias {
@@ -100,8 +104,8 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  aliases = ["${local.domain_name}.${var.hosted_zone}"]
-
+  aliases = local.local_aliases
+  
   default_cache_behavior {
     allowed_methods = [
       "GET",
@@ -114,7 +118,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     ]
 
     target_origin_id = "s3-cloudfront"
-
+    
     forwarded_values {
       query_string = false
 
