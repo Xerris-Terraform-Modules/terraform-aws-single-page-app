@@ -54,6 +54,16 @@ resource "aws_s3_bucket" "s3_bucket" {
     index_document = "index.html"
     error_document = "index.html"
   }
+  
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET"]
+    allowed_origins = ["*"]
+    expose_headers  = ["x-amz-server-side-encryption",
+            "x-amz-request-id",
+            "x-amz-id-2"]
+    max_age_seconds = 3000
+  }
 
   policy = data.aws_iam_policy_document.s3_bucket_policy.json
   tags   = var.tags
@@ -67,13 +77,11 @@ data "aws_route53_zone" "domain_name" {
 
 resource "aws_route53_record" "route53_record" {
   for_each = toset(local.local_aliases)
-  //count = var.use_default_domain ? 0 : 1
   depends_on = [
     aws_cloudfront_distribution.s3_distribution
   ]
 
   zone_id = data.aws_route53_zone.domain_name[0].zone_id
-  //name    = var.domain_name
   name = each.value
   type    = "A"
 
@@ -135,6 +143,8 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   price_class = var.price_class
+  cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+  origin_request_policy_id = "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf"
 
   restrictions {
     geo_restriction {
