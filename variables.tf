@@ -9,7 +9,7 @@ variable "tags" {
 }
 
 variable "hosted_zone" {
-  default     = null
+  default     = ""
   description = "Hosted Zone for Route 53"
 }
 
