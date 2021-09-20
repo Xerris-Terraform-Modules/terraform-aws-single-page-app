@@ -7,7 +7,7 @@ locals {
   default_certs = var.use_default_domain ? ["default"] : []
   acm_certs     = var.use_default_domain ? [] : ["acm"]
   domain_name   = var.use_default_domain ? "" : var.domain_name
-  local_aliases = var.cloudfront-aliases == [] ? ["${local.domain_name}.${var.hosted_zone}"] : formatlist("%s.${var.hosted_zone}", var.cloudfront-aliases)
+  local_aliases = var.cloudfront-aliases == [] ? [] : formatlist("%s.${var.hosted_zone}", var.cloudfront-aliases)
  
 }
 
